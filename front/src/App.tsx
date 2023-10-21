@@ -11,27 +11,18 @@ import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import { useAppSelector } from "./store/hooks";
 import MyCocktailsPage from "./components/cocktails/MyCocktailsList";
 import NewCocktailPage from "./components/cocktails/NewCocktailForm";
+import NavBar from "./components/NavBar";
 
 function App() {
   const user = useAppSelector((state) => state.users.currentUser);
   return (
     <>
-      <AppToolbar />
+      <NavBar />
       <main>
         <Container maxWidth="xl">
           <Routes>
            
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/login" element={<LoginPage />} />
-
-            <Route
-              element={
-                <ProtectedRoute isAllowed={!!user} redirectPath="/login" />
-              }
-            >
-              <Route path="/my-cocktails" element={<MyCocktailsPage />} />
-              <Route path="/add-cocktail" element={<NewCocktailPage />} />
-            </Route>
+            
           </Routes>
         </Container>
       </main>
