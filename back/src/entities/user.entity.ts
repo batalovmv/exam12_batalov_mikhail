@@ -1,36 +1,29 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Rating } from "./rating.entity";
-import { Cocktail } from "./cocktail.entity";
-
+import { Establishment } from "./establishment.entity";
+import { Review } from "./review.entity";
+import { Image } from "./image.entity";
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ unique: true })
+  @Column()
   username!: string;
 
   @Column()
-  displayName!: string;
-
-  @Column()
-  email!: string;
-
-  @Column({ default: 'default_avatar.png' })
-  avatar!: string;
-
-  @Column()
   password!: string;
-
   @Column()
   token!: string;
 
   @Column()
-  role!: 'user' | 'admin';
+  role!: string;
 
-  @OneToMany(() => Cocktail, (cocktail) => cocktail.user)
-  cocktails!: Cocktail[];
+  @OneToMany(type => Establishment, establishment => establishment.user)
+  establishments!: Establishment[];
 
-  @OneToMany(() => Rating, (rating) => rating.user)
-  ratings!: Rating[];
+  @OneToMany(type => Review, review => review.user)
+  reviews!: Review[];
+
+  @OneToMany(type => Image, image => image.user)
+  images!: Image[];
 }

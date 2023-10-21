@@ -9,22 +9,14 @@ import { MulterUpload } from "../multer/usersPhoto";
 
 @JsonController('/users')
 export class UserController {
-
   @Post('/register')
-  @UseBefore(MulterUpload)
   async create(@Body() userData: CreateUserDto, @Req() req: any) {
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     const newUser = new User();
     newUser.username = userData.username;
     newUser.password = hashedPassword;
-    newUser.displayName = userData.displayName;
-    newUser.email = userData.email;
     newUser.token = nanoid();
     newUser.role = 'user';
-
-    if (req.file) {
-      newUser.avatar = req.file.filename; 
-    }
 
     await UserRepository.save(newUser);
 
@@ -51,39 +43,8 @@ export class UserController {
     user.token = nanoid();
     await UserRepository.save(user);
 
-    return { token: user.token, username: user.username, id: user.id, role: user.role };;
+    return { token: user.token, username: user.username, id: user.id, role: user.role };
   }
   
-  @Get('/profile')
-  async getProfile(@CurrentUser() user: User) {
-    return user;
-  }
   
-  @Put('/profile')
-  async updateProfile(@Body() profileData: any, @CurrentUser() user: User) {
-    user.displayName = profileData.displayName || user.displayName;
-    user.avatar = profileData.avatar || user.avatar;
-    user.email = profileData.email || user.email;
-
-    if (profileData.password) {
-      user.password = await bcrypt.hash(profileData.password, 10);
-    }
-
-    await UserRepository.save(user); 
-    return user;
-  }
-
-  @Authorized('admin')
-  @Post('/make-admin/:userId')
-  async makeAdmin(@Param('userId') userId: number) {
-    const user = await UserRepository.findOne({ where: { id: userId } });
-
-    if (!user) throw new HttpError(400, "User not found");
-
-    user.role = 'admin';
-    await UserRepository.save(user);
-
-    return { message: 'Role updated to admin' };
-  }
-
 }
