@@ -1,12 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { userReducer } from "../features/UserSlice";
-import { EstablishmentReducer } from "../features/establishmentSlice";
+import { establishmentReducer } from "../features/EstablishmentSlice";
+
 userReducer
 
 const store = configureStore({
   reducer: {
    users: userReducer,
-   establishments:EstablishmentReducer
+   establishments:establishmentReducer
   },
 });
 

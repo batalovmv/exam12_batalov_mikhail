@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 
 const NavBar = () => {
   const dispatch = useAppDispatch();
-  const userState = useAppSelector(state => state.users); 
+  const userState = useAppSelector(state => state.users);
 
   const handleLogout = () => {
     dispatch(logoutUser());
@@ -22,6 +22,7 @@ const NavBar = () => {
               {userState.user.username}
             </Typography>
             <Button color="inherit" onClick={handleLogout}>Logout</Button>
+            <Button color="inherit" component={Link} to="/new-establishment">New Establishment</Button>
           </>
         ) : (
           <>

@@ -3,6 +3,7 @@ import axios from 'axios';
 import axiosInstance from '../Api/axiosInstance';
 
 interface User {
+  id: number;  
   username: string;
   password: string;
   role: string;
@@ -26,6 +27,12 @@ export const registerUser = createAsyncThunk<User, CreateUserDto, { rejectValue:
   async (userData, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post<User>('/users/register', userData);
+
+      
+      const token = response.data.token;
+      localStorage.setItem('token', token);
+      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
       return response.data;
     } catch (error: any) {
       return rejectWithValue({ message: error.message || 'Unknown error' });
@@ -38,6 +45,12 @@ export const loginUser = createAsyncThunk<User, LoginUserDto, { rejectValue: Use
   async (loginData, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post<User>('/users/login', loginData);
+
+      
+      const token = response.data.token;
+      localStorage.setItem('token', token);
+      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
       return response.data;
     } catch (error: any) {
       return rejectWithValue({ message: error.message || 'Unknown error' });

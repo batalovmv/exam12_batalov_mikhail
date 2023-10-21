@@ -10,6 +10,7 @@ import { LoginForm } from "./components/Forms/Login";
 
 import { EstablishmentsRoute } from "./components/routes/establishemntROute";
 import EstablishmentDetails from "./components/EstablishmentsDetails";
+import EstablishmentForm from "./components/Forms/CreateEstablishment";
 
 
 function App() {
@@ -20,10 +21,11 @@ function App() {
         <Container maxWidth="xl">
           <Routes>
             <Route path="/" element={<Navigate to="/login" />} />
-            <Route path="/establishment/:id" element={<EstablishmentDetails/>} />
+            <Route path="/establishment/:id" element={<EstablishmentDetails />} />
             <Route path="/register" element={<RegisterForm />} />
             <Route path="/login" element={<LoginForm />} />
             <Route path="/establishments" element={<EstablishmentsRoute />} />
+            <Route path="/new-establishment" element={<EstablishmentForm />} /> 
           </Routes>
         </Container>
       </main>

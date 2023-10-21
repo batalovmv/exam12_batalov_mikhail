@@ -16,3 +16,11 @@ export class CreateReviewDto {
   environmentRating!: number;
   comment!: string;
 }
+export interface CreateReviewDto {
+  qualityRating: number;
+  serviceRating: number;
+  environmentRating: number;
+  comment: string;
+  userId: number;
+  establishmentId: number;
+}

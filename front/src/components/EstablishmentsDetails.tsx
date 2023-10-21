@@ -1,15 +1,22 @@
 import { useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { useEffect } from "react";
-import { Box, Grid, Paper, Typography } from "@mui/material";
-import { fetchEstablishment } from "../features/establishmentSlice";
+import { useEffect, useState } from "react";
+import { Box, Button, Grid, Paper, TextField, TextareaAutosize, Typography } from "@mui/material";
+import { CreateReviewDto, createReview, fetchEstablishment } from "../features/EstablishmentSlice";
 
- const EstablishmentDetails = () => {
+
+
+export const EstablishmentDetails = () => {
   const { id: rawId } = useParams<{ id: string }>();
   const id = rawId ?? '';
   const dispatch = useAppDispatch();
 
   const establishment = useAppSelector((state) => state.establishments.establishments).find(est => est.id === +id);
+
+  const [reviewText, setReviewText] = useState('');
+  const [qualityRating, setQualityRating] = useState<number | null>(null);
+  const [serviceRating, setServiceRating] = useState<number | null>(null);
+  const [environmentRating, setEnvironmentRating] = useState<number | null>(null);
 
   useEffect(() => {
     if (!establishment) {
@@ -18,34 +25,89 @@ import { fetchEstablishment } from "../features/establishmentSlice";
   }, [dispatch, id, establishment]);
 
   if (!establishment) {
-    return <div>Loading or not established found...</div>;  
+    return <div>Loading or not established found...</div>;
   }
 
-   return (
-     <Box sx={{ flexGrow: 1, m: 2, display: 'flex', justifyContent: 'center' }}>
-       <Grid container spacing={2} justifyContent="center">
-         <Grid item xs={12} sm={8} md={6}>
-           <Paper sx={{ p: 2 }}>
-             <Typography variant="h5" sx={{ marginBottom: 2 }}>{establishment.name}</Typography>
-             <Typography variant="body1" sx={{ marginBottom: 2 }}>User: {establishment.user.username}</Typography>
-             <Box
-               component="img"
-               src={establishment.images[0]?.url}
-               alt={establishment.name}
-               sx={{ width: '100%', height: 'auto', objectFit: 'cover', marginBottom: 2 }}
-             />
-             {/* Показать все отзывы */}
-             {establishment.reviews.map((review, i) =>
-               <Typography variant="body1" key={i} sx={{ marginBottom: 2 }}>
-                 Review {i + 1}: {review.comment}
-               </Typography>
-             )}
-           </Paper>
-         </Grid>
-       </Grid>
-     </Box>
-   );
+  const averageRating = establishment.reviews.reduce((prev, curr) => {
+    const currAverageRating = (curr.qualityRating + curr.serviceRating + curr.environmentRating) / 3;
+    return prev + currAverageRating;
+  }, 0) / establishment.reviews.length;
+
+  const handleAddReview = () => {
+    if (qualityRating && serviceRating && environmentRating) {
+      const reviewData: CreateReviewDto = {
+        comment: reviewText,
+        qualityRating: qualityRating,
+        serviceRating: serviceRating,
+        environmentRating: environmentRating,
+      };
+
+      dispatch(createReview(reviewData));
+
+      setReviewText('');
+      setQualityRating(null);
+      setServiceRating(null);
+      setEnvironmentRating(null);
+    }
+  };
+
+
+  return (
+    <Box sx={{ flexGrow: 1, m: 2, display: 'flex', justifyContent: 'center' }}>
+      <Grid container spacing={2} justifyContent="center">
+        <Grid item xs={12} sm={8} md={6}>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h5" sx={{ marginBottom: 2 }}>{establishment.name}</Typography>
+            <Typography variant="body1" sx={{ marginBottom: 2 }}>User: {establishment.user.username}</Typography>
+            <Box
+              component="img"
+              src={establishment.images[0]?.url}
+              alt={establishment.name}
+              sx={{ width: '100%', height: 'auto', objectFit: 'cover', marginBottom: 2 }}
+            />
+            <Typography variant="body1" sx={{ marginBottom: 2 }}>Average Rating: {averageRating.toFixed(1)}</Typography>
+            {establishment.reviews.slice().sort((a, b) => b.id - a.id).map((review, i) => {
+              const averageRating = (review.qualityRating + review.serviceRating + review.environmentRating) / 3;
+
+              return (
+                <Typography variant="body1" key={i} sx={{ marginBottom: 2 }}>
+                  Review {i + 1}: {review.comment} - Average Rating: {averageRating.toFixed(1)}
+                </Typography>
+              );
+            })}
+            <TextareaAutosize
+              minRows={3}
+              placeholder="Add a review..."
+              value={reviewText}
+              onChange={(e) => setReviewText(e.target.value)}
+            />
+            <TextField
+              type="number"
+              value={qualityRating || ''}
+              onChange={(e) => setQualityRating(Number(e.target.value))}
+              label="Quality Rating"
+              inputProps={{ min: 1, max: 5 }}
+            />
+            <TextField
+              type="number"
+              value={serviceRating || ''}
+              onChange={(e) => setServiceRating(Number(e.target.value))}
+              label="Service Rating"
+              inputProps={{ min: 1, max: 5 }}
+            />
+            <TextField
+              type="number"
+              value={environmentRating || ''}
+              onChange={(e) => setEnvironmentRating(Number(e.target.value))}
+              label="Environment Rating"
+              inputProps={{ min: 1, max: 5 }}
+            />
+            <Button onClick={handleAddReview}>Submit Review</Button>
+          </Paper>
+        </Grid>
+      </Grid>
+    </Box>
+  );
 };
 
 export default EstablishmentDetails;
-

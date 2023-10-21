@@ -1,7 +1,12 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import axiosInstance from '../Api/axiosInstance';
-
+export interface CreateReviewDto {
+  qualityRating: number;
+  serviceRating: number;
+  environmentRating: number;
+  comment: string;
+}
 interface User {
   id: number;
   username: string;
@@ -41,6 +46,13 @@ const initialState: EstablishmentState = {
   status: 'idle',
   error: null,
 };
+export const createReview = createAsyncThunk(
+  'reviews/createReview',
+  async (reviewData: CreateReviewDto) => {
+    const response = await axiosInstance.post('/reviews', reviewData);
+    return response.data as Review;
+  }
+);
 
 export const fetchEstablishments = createAsyncThunk(
   'establishments/fetchEstablishments',
@@ -48,6 +60,25 @@ export const fetchEstablishments = createAsyncThunk(
     const response = await axiosInstance.get('/establishments');
     console.log(`response.data`, response.data);
     return response.data as Establishment[];
+  }
+);
+export const createEstablishment = createAsyncThunk(
+  'establishments/createEstablishment',
+  async (newEstablishment: { establishmentData: Omit<Establishment, 'id'>, image: File }) => {
+    let formData = new FormData();
+
+    if (newEstablishment.image) {
+      formData.append('image', newEstablishment.image);
+      const imageResponse = await axiosInstance.post('/images', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      newEstablishment.establishmentData.images = [imageResponse.data];
+    }
+
+    const response = await axiosInstance.post('/establishments', newEstablishment.establishmentData);
+    return response.data as Establishment;
   }
 );
 export const fetchEstablishment = createAsyncThunk(
@@ -64,14 +95,15 @@ export const establishmentSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchEstablishments.fulfilled, (state, action) => {
+    builder
+    .addCase(fetchEstablishments.fulfilled, (state, action) => {
       state.status = 'succeeded';
       state.establishments = action.payload;
-    });
-    builder.addCase(fetchEstablishments.pending, (state) => {
+    })
+    .addCase(fetchEstablishments.pending, (state) => {
       state.status = 'loading';
-    });
-    builder.addCase(fetchEstablishments.rejected, (state, action) => {
+    })
+    .addCase(fetchEstablishments.rejected, (state, action) => {
       state.status = 'failed';
       state.error = action.error.message;
     })
@@ -87,8 +119,34 @@ export const establishmentSlice = createSlice({
  .addCase(fetchEstablishment.rejected, (state, action) => {
     state.status = 'failed';
     state.error = action.error.message;
-  });
+  })
+    .addCase(createEstablishment.fulfilled, (state, action) => {
+      state.status = 'succeeded';
+      state.establishments.push(action.payload);
+    })
+    .addCase(createEstablishment.pending, (state) => {
+      state.status = 'loading';
+    })
+   
+    .addCase(createEstablishment.rejected, (state, action) => {
+      console.log(action.error.message);
+    })
+      .addCase(createReview.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        // Найдите заведение, к которому относится отзыв, и добавьте новый отзыв в список отзывов
+        const establishmentIndex = state.establishments.findIndex(e => e.id === action.payload.establishmentId);
+        if (establishmentIndex !== -1) {
+          state.establishments[establishmentIndex].reviews.push(action.payload);
+        }
+      })
+      .addCase(createReview.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(createReview.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      });
   },
 });
 
-export const EstablishmentReducer =  establishmentSlice.reducer;
+export const establishmentReducer =  establishmentSlice.reducer;

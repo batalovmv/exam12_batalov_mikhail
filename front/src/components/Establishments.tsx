@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Box, Grid, Link, Paper, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { fetchEstablishments } from '../features/establishmentSlice';
+import { fetchEstablishments } from '../features/EstablishmentSlice';
 
 interface User {
   id: number;

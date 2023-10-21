@@ -21,6 +21,8 @@ const options: DataSourceOptions & SeederOptions = {
   entities: [Establishment, Image,Review,User],
   seeds: [UserSeeder,MainSeeder],
   factories: [EstablishmentFactory,ImageFactory,UserFactory,ReviewFactory],
+  
+
   synchronize: true,
 };
 export const AppDataSource = new DataSource(options);
