@@ -1,11 +1,12 @@
 import { Authorized, Body, CurrentUser, Get, HttpError, JsonController, Param, Post, Put, Req, UseBefore } from "routing-controllers";
-import { CreateUserDto } from "../dto/createUserDto";
+
 import { LoginUserDto } from "../dto/loginUserDto";
 import { nanoid } from 'nanoid';
 import bcrypt from 'bcrypt';
 import { UserRepository } from "../repositories/user.repository";
 import { User } from "../entities/user.entity";
 import { MulterUpload } from "../multer/usersPhoto";
+import { CreateUserDto } from "../dto/DTO";
 
 @JsonController('/users')
 export class UserController {
