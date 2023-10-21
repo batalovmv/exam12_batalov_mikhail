@@ -2,11 +2,32 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import axiosInstance from '../Api/axiosInstance';
 
+interface User {
+  id: number;
+  username: string;
+  role: string;
+}
+
+interface Review {
+  id: number;
+  qualityRating: number;
+  serviceRating: number;
+  environmentRating: number;
+  comment: string;
+}
+
+interface Image {
+  id: number;
+  url: string;
+}
+
 interface Establishment {
   id: number;
   name: string;
   description: string;
- 
+  user: User;
+  reviews: Review[];
+  images: Image[];
 }
 
 interface EstablishmentState {
@@ -25,6 +46,7 @@ export const fetchEstablishments = createAsyncThunk(
   'establishments/fetchEstablishments',
   async () => {
     const response = await axiosInstance.get('/establishments');
+    console.log(`response.data`, response.data);
     return response.data as Establishment[];
   }
 );
