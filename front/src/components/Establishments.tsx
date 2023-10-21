@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { Box, Grid, Link, Paper, Typography } from '@mui/material';
+import { Box, Button, Grid, Link, Paper, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { fetchEstablishments } from '../features/EstablishmentSlice';
+import { deleteEstablishment, fetchEstablishments } from '../features/EstablishmentSlice';
 
 interface User {
   id: number;
@@ -35,10 +35,15 @@ interface Establishment {
 const Establishments = () => {
   const dispatch = useAppDispatch();
   const establishments = useAppSelector((state) => state.establishments.establishments);
-
+  const user = useAppSelector((state) => state.users);
+  const currentUser = useAppSelector(state => state.users.user); 
   useEffect(() => {
     dispatch(fetchEstablishments());
   }, [dispatch]);
+
+  const handleDelete = (id:number) => {
+    dispatch(deleteEstablishment(id));
+  };
 
   return (
     <Box sx={{ flexGrow: 1, m: 2 }}>
@@ -58,6 +63,9 @@ const Establishments = () => {
                 sx={{ width: '100%', height: 'auto', objectFit: 'cover' }}
               />
               <Typography variant="body1">Number of reviews: {establishment.reviews.length}</Typography>
+              {currentUser?.role === 'admin' && (
+                <Button onClick={() => handleDelete(establishment.id)}>Delete</Button>
+              )}
               {/* ...другие данные... */}
             </Paper>
           </Grid>

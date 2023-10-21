@@ -52,10 +52,14 @@ export class EstablishmentController {
 
     if (!establishment) throw new HttpError(404, "Establishment not found");
 
+    
+    const establishmentId = establishment.id;
+
     await ImageRepository.remove(establishment.images);
     await ReviewRepository.remove(establishment.reviews);
     await EstablishmentRepository.remove(establishment);
 
-    return { message: 'Establishment deleted successfully' };
+
+    return { id: establishmentId };
   }
 }

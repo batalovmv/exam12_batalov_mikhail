@@ -48,8 +48,10 @@ export class ReviewController {
 
     if (!review) throw new HttpError(404, "Review not found");
 
+    const reviewId = review.id;
+
     await ReviewRepository.remove(review);
 
-    return { message: 'Review deleted successfully' };
+    return { id: reviewId };
   }
 }

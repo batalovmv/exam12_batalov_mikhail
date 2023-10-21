@@ -6,8 +6,8 @@ export interface CreateReviewDto {
   serviceRating: number;
   environmentRating: number;
   comment: string;
-  userId: number;  // Добавьте userId
-  establishmentId: number;  // Добавьте establishmentId
+  userId: number;  
+  establishmentId: number; 
 }
 
 interface User {
@@ -22,15 +22,16 @@ interface Review {
   serviceRating: number;
   environmentRating: number;
   comment: string;
-  user: User;  // Чтобы связать обзор с пользователем
-  establishment: Establishment;  // Чтобы связать обзор с заведением
+  user: User;  
+  establishment: Establishment;  
+  establishmentId: number;  
 }
 
 interface Image {
   id: number;
   url: string;
-  user: User;  // Чтобы связать изображение с пользователем
-  establishment: Establishment;  // Чтобы связать изображение с заведением
+  user: User;  
+  establishment: Establishment;  
 }
 
 interface Establishment {
@@ -104,6 +105,21 @@ export const fetchEstablishment = createAsyncThunk(
   }
 );
 
+export const deleteReview = createAsyncThunk(
+  'reviews/deleteReview',
+  async (reviewId: number) => {
+    const response = await axiosInstance.delete(`/reviews/${reviewId}`);
+    return response.data;
+  }
+);
+export const deleteEstablishment = createAsyncThunk(
+  'establishments/deleteEstablishment',
+  async (establishmentId: number) => {
+    const response = await axiosInstance.delete(`/establishments/${establishmentId}`);
+    return response.data;
+  }
+);
+
 export const establishmentSlice = createSlice({
   name: 'establishments',
   initialState,
@@ -147,7 +163,6 @@ export const establishmentSlice = createSlice({
     })
       .addCase(createReview.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        // Найдите заведение, к которому относится отзыв, и добавьте новый отзыв в список отзывов
         const establishmentIndex = state.establishments.findIndex(e => e.id === action.payload.establishmentId);
         if (establishmentIndex !== -1) {
           state.establishments[establishmentIndex].reviews.push(action.payload);
@@ -157,6 +172,30 @@ export const establishmentSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(createReview.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(deleteReview.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.establishments.forEach(establishment => {
+          establishment.reviews = establishment.reviews.filter(review => review.id !== action.payload.id);
+        });
+      })
+      .addCase(deleteReview.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(deleteReview.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(deleteEstablishment.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.establishments = state.establishments.filter(establishment => establishment.id !== action.payload.id);
+      })
+      .addCase(deleteEstablishment.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(deleteEstablishment.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });

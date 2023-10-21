@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { useEffect, useState } from "react";
 import { Box, Button, Grid, Paper, TextField, TextareaAutosize, Typography } from "@mui/material";
-import { CreateReviewDto, createReview, fetchEstablishment } from "../features/EstablishmentSlice";
+import { CreateReviewDto, createReview, deleteReview, fetchEstablishment } from "../features/EstablishmentSlice";
 
 
 
@@ -52,7 +52,9 @@ export const EstablishmentDetails = () => {
       setEnvironmentRating(null);
     }
   };
-
+  const handleDeleteReview = (reviewId: number) => {
+    dispatch(deleteReview(reviewId));
+  };
 
 
   return (
@@ -73,9 +75,14 @@ export const EstablishmentDetails = () => {
               const averageRating = (review.qualityRating + review.serviceRating + review.environmentRating) / 3;
 
               return (
-                <Typography variant="body1" key={i} sx={{ marginBottom: 2 }}>
-                  Review {i + 1}: {review.comment} - Average Rating: {averageRating.toFixed(1)}
-                </Typography>
+                <Box key={i}>
+                  <Typography variant="body1" sx={{ marginBottom: 2 }}>
+                    Review {i + 1}: {review.comment} - Average Rating: {averageRating.toFixed(1)}
+                  </Typography>
+                  {currentUser?.role === 'admin' && (
+                    <Button onClick={() => handleDeleteReview(review.id)}>Delete Review</Button>
+                  )}
+                </Box>
               );
             })}
             <TextareaAutosize
