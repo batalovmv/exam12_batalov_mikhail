@@ -50,6 +50,14 @@ export const fetchEstablishments = createAsyncThunk(
     return response.data as Establishment[];
   }
 );
+export const fetchEstablishment = createAsyncThunk(
+  'establishments/fetchEstablishment',
+  async (id: number) => {
+    const response = await axiosInstance.get(`/establishments/${id}`);
+    console.log(`response.data for ${id}`, response.data);
+    return response.data as Establishment;
+  }
+);
 
 export const establishmentSlice = createSlice({
   name: 'establishments',
@@ -66,7 +74,20 @@ export const establishmentSlice = createSlice({
     builder.addCase(fetchEstablishments.rejected, (state, action) => {
       state.status = 'failed';
       state.error = action.error.message;
-    });
+    })
+    .addCase(fetchEstablishment.fulfilled, (state, action) => {
+      state.status = 'succeeded';
+      state.establishments = state.establishments.map(establishment =>
+        establishment.id !== action.payload.id ? establishment : action.payload
+      );
+    })
+  .addCase(fetchEstablishment.pending, (state) => {
+    state.status = 'loading';
+  })
+ .addCase(fetchEstablishment.rejected, (state, action) => {
+    state.status = 'failed';
+    state.error = action.error.message;
+  });
   },
 });
 

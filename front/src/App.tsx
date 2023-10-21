@@ -9,6 +9,8 @@ import { RegisterForm } from "./components/Forms/Register";
 import { LoginForm } from "./components/Forms/Login";
 
 import { EstablishmentsRoute } from "./components/routes/establishemntROute";
+import EstablishmentDetails from "./components/EstablishmentsDetails";
+
 
 function App() {
   return (
@@ -18,6 +20,7 @@ function App() {
         <Container maxWidth="xl">
           <Routes>
             <Route path="/" element={<Navigate to="/login" />} />
+            <Route path="/establishment/:id" element={<EstablishmentDetails/>} />
             <Route path="/register" element={<RegisterForm />} />
             <Route path="/login" element={<LoginForm />} />
             <Route path="/establishments" element={<EstablishmentsRoute />} />
