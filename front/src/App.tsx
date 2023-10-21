@@ -20,7 +20,7 @@ function App() {
       <main>
         <Container maxWidth="xl">
           <Routes>
-            <Route path="/" element={<Navigate to="/login" />} />
+            <Route path="/" element={<Navigate to="/establishments" />} />
             <Route path="/establishment/:id" element={<EstablishmentDetails />} />
             <Route path="/register" element={<RegisterForm />} />
             <Route path="/login" element={<LoginForm />} />

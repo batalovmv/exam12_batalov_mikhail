@@ -1,5 +1,5 @@
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AppBar, Toolbar, Button, Typography } from '@mui/material';
 import { logoutUser } from '../features/UserSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
@@ -7,9 +7,10 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 const NavBar = () => {
   const dispatch = useAppDispatch();
   const userState = useAppSelector(state => state.users);
-
+  const navigate = useNavigate();
   const handleLogout = () => {
     dispatch(logoutUser());
+    navigate('/establishments');
   };
 
   return (

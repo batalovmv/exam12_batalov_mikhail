@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { createEstablishment } from '../../features/EstablishmentSlice';
+import { useNavigate } from 'react-router-dom';
 
 
 function EstablishmentForm() {
@@ -8,7 +9,7 @@ function EstablishmentForm() {
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
   const currentUser = useAppSelector(state => state.users.user); 
-
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const onNameChanged = e => setName(e.target.value);
@@ -33,6 +34,7 @@ function EstablishmentForm() {
       setName('');
       setDescription('');
       setImage(null);
+      navigate('/');
     }
   };
 
