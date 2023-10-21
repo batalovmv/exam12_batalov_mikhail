@@ -4,6 +4,8 @@ import { CreateEstablishmentDto } from '../dto/DTO';
 import { EstablishmentRepository } from '../repositories/Establishment.repository';
 import { UserRepository } from '../repositories/user.repository';
 import { User } from '../entities/user.entity';
+import { ImageRepository } from '../repositories/Image.repository';
+import { ReviewRepository } from '../repositories/Review.repository';
 
 
 @JsonController('/establishments')
@@ -46,11 +48,12 @@ export class EstablishmentController {
   @Authorized('admin')
   @Delete('/:id')
   async delete(@Param('id') id: number) {
-    const establishment = await EstablishmentRepository.findOne({ where: { id } });
-
+    const establishment = await EstablishmentRepository.findOne({ where: { id }, relations: ["images", "reviews"] });
 
     if (!establishment) throw new HttpError(404, "Establishment not found");
 
+    await ImageRepository.remove(establishment.images);
+    await ReviewRepository.remove(establishment.reviews);
     await EstablishmentRepository.remove(establishment);
 
     return { message: 'Establishment deleted successfully' };
