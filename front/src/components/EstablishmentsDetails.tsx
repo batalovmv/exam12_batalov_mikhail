@@ -87,10 +87,11 @@ export const EstablishmentDetails = () => {
               );
             })}
             <TextareaAutosize
-              minRows={3}
+              minRows={6}
               placeholder="Add a review..."
               value={reviewText}
               onChange={(e) => setReviewText(e.target.value)}
+              style={{ width: '100%', height: 'auto' }} 
             />
             <Box mt={1}>
               <TextField
