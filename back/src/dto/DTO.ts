@@ -6,9 +6,11 @@ export class CreateUserDto {
 export class CreateEstablishmentDto {
   name!: string;
   description!: string;
+  userId!: number;
 }
 export class CreateImageDto {
   url!: string;
+  userId!: number;
 }
 export class CreateReviewDto {
   qualityRating!: number;

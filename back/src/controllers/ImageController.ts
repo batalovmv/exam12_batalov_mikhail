@@ -1,7 +1,11 @@
-import { JsonController, Authorized, Post, Param, Get, Delete, UploadedFile, HttpError } from 'routing-controllers';
+import { JsonController, Authorized, Post, Param, Get, Delete, UploadedFile, HttpError, Body, CurrentUser } from 'routing-controllers';
 import multer from 'multer';
 import { ImageRepository } from '../repositories/Image.repository';
 import { Image } from '../entities/image.entity';
+import { CreateImageDto } from '../dto/DTO';
+import { UserRepository } from '../repositories/user.repository';
+import { User } from '../entities/user.entity';
+import { EstablishmentRepository } from '../repositories/Establishment.repository';
 const upload = multer({ dest: 'uploads/' });
 
   @JsonController('/images')
@@ -9,10 +13,29 @@ const upload = multer({ dest: 'uploads/' });
 
     @Authorized('user')
     @Post('/')
-    async create(@UploadedFile('image', { options: upload }) file: any) {
+    async create(
+      @CurrentUser() user: User,
+      @UploadedFile('image', { options: upload }) file: any,
+      @Body() imageData: CreateImageDto,
+      @Body() establishmentId: string   
+    ) {
       const newImage = new Image();
       newImage.url = file.path;
-      
+
+    
+      const establishmentIdNum = parseInt(establishmentId, 10);
+      if (isNaN(establishmentIdNum)) {
+        throw new Error('Invalid establishmentId');
+      }
+      const establishment = await EstablishmentRepository.findOne({ where: { id: establishmentIdNum } });
+
+      if (!user || !establishment) {
+        throw new Error('User or Establishment not found');
+      }
+
+      newImage.user = user;
+      newImage.establishment = establishment; 
+
       await ImageRepository.save(newImage);
 
       return newImage;

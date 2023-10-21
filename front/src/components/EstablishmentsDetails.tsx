@@ -10,7 +10,7 @@ export const EstablishmentDetails = () => {
   const { id: rawId } = useParams<{ id: string }>();
   const id = rawId ?? '';
   const dispatch = useAppDispatch();
-
+  const currentUser = useAppSelector(state => state.users.user); 
   const establishment = useAppSelector((state) => state.establishments.establishments).find(est => est.id === +id);
 
   const [reviewText, setReviewText] = useState('');
@@ -34,12 +34,14 @@ export const EstablishmentDetails = () => {
   }, 0) / establishment.reviews.length;
 
   const handleAddReview = () => {
-    if (qualityRating && serviceRating && environmentRating) {
+    if (qualityRating && serviceRating && environmentRating && currentUser && establishment) {
       const reviewData: CreateReviewDto = {
         comment: reviewText,
         qualityRating: qualityRating,
         serviceRating: serviceRating,
         environmentRating: environmentRating,
+        userId: currentUser.id,
+        establishmentId: establishment.id
       };
 
       dispatch(createReview(reviewData));
@@ -50,6 +52,7 @@ export const EstablishmentDetails = () => {
       setEnvironmentRating(null);
     }
   };
+
 
 
   return (

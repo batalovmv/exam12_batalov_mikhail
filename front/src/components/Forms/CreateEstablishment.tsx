@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { createEstablishment } from '../../features/establishmentSlice';
+import { createEstablishment } from '../../features/EstablishmentSlice';
 
 
 function EstablishmentForm() {
@@ -18,24 +18,24 @@ function EstablishmentForm() {
   const onSubmit = e => {
     e.preventDefault();
 
-    if (name && description && image && currentUser) { 
+    if (name && description && image && currentUser) {
       dispatch(createEstablishment({
         establishmentData: {
           name,
           description,
           user: currentUser,
           images: [image],
-          reviews: []   
+          reviews: []
         },
         image
       }));
-
 
       setName('');
       setDescription('');
       setImage(null);
     }
   };
+
 
   return (
     <form onSubmit={onSubmit}>

@@ -1,7 +1,9 @@
-import { JsonController, Authorized, Post, Param, Get, Body, Delete, HttpError } from 'routing-controllers';
+import { JsonController, Authorized, Post, Param, Get, Body, Delete, HttpError, CurrentUser } from 'routing-controllers';
 import { Establishment } from '../entities/establishment.entity';
 import { CreateEstablishmentDto } from '../dto/DTO';
 import { EstablishmentRepository } from '../repositories/Establishment.repository';
+import { UserRepository } from '../repositories/user.repository';
+import { User } from '../entities/user.entity';
 
 
 @JsonController('/establishments')
@@ -9,10 +11,16 @@ export class EstablishmentController {
 
   @Authorized('user')
   @Post('/')
-  async create(@Body() establishmentData: CreateEstablishmentDto) {
+  async create(@CurrentUser() user: User, @Body() establishmentData: CreateEstablishmentDto) {
     const newEstablishment = new Establishment();
     newEstablishment.name = establishmentData.name;
     newEstablishment.description = establishmentData.description;
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    newEstablishment.user = user;
 
     await EstablishmentRepository.save(newEstablishment);
 

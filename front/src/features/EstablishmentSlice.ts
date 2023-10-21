@@ -6,7 +6,10 @@ export interface CreateReviewDto {
   serviceRating: number;
   environmentRating: number;
   comment: string;
+  userId: number;  // Добавьте userId
+  establishmentId: number;  // Добавьте establishmentId
 }
+
 interface User {
   id: number;
   username: string;
@@ -19,11 +22,15 @@ interface Review {
   serviceRating: number;
   environmentRating: number;
   comment: string;
+  user: User;  // Чтобы связать обзор с пользователем
+  establishment: Establishment;  // Чтобы связать обзор с заведением
 }
 
 interface Image {
   id: number;
   url: string;
+  user: User;  // Чтобы связать изображение с пользователем
+  establishment: Establishment;  // Чтобы связать изображение с заведением
 }
 
 interface Establishment {
@@ -65,20 +72,27 @@ export const fetchEstablishments = createAsyncThunk(
 export const createEstablishment = createAsyncThunk(
   'establishments/createEstablishment',
   async (newEstablishment: { establishmentData: Omit<Establishment, 'id'>, image: File }) => {
+   
+    let response = await axiosInstance.post('/establishments', newEstablishment.establishmentData);
+    let establishment = response.data as Establishment;
+
     let formData = new FormData();
 
     if (newEstablishment.image) {
       formData.append('image', newEstablishment.image);
+      formData.append('establishmentId', String(establishment.id)); 
+
       const imageResponse = await axiosInstance.post('/images', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      newEstablishment.establishmentData.images = [imageResponse.data];
+
+      // Добавляем изображение к заведению
+      establishment.images = [imageResponse.data];
     }
 
-    const response = await axiosInstance.post('/establishments', newEstablishment.establishmentData);
-    return response.data as Establishment;
+    return establishment;
   }
 );
 export const fetchEstablishment = createAsyncThunk(

@@ -35,12 +35,12 @@ AppDataSource.initialize().then(async () => {
     currentUserChecker: currentUserChecker,
   });
 
-  app.use(express.json());
+ 
 
   // Обработчик ошибок, добавил статус ошибки для отладки
   app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
     console.error(`Error encountered: ${err.message}`);
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   });
   app.all('*', (req, res) => {
     if (!res.headersSent) {
