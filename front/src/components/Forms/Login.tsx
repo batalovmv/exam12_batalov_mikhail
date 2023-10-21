@@ -2,18 +2,24 @@ import React from "react";
 import { Button, TextField, Grid, AppBar, Typography, Toolbar, Stack } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { loginUser } from "../../features/UserSlice";
+import { useNavigate } from "react-router-dom";
 
 export const LoginForm = () => {
   const dispatch = useAppDispatch();
-  const userState = useAppSelector(state => state.users.user); 
+  const userState = useAppSelector(state => state.users.user);
+  const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const username = event.target.username.value;
     const password = event.target.password.value;
 
-    dispatch(loginUser({ username, password }));
+    const resultAction = await dispatch(loginUser({ username, password }));
+
+    if (loginUser.fulfilled.match(resultAction)) {
+      navigate('/establishments');
+    }
   };
 
   return (

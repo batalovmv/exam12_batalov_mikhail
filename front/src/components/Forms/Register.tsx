@@ -2,19 +2,26 @@ import React from "react";
 import { Button, TextField, Grid, AppBar, Typography, Toolbar, Stack } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { registerUser } from "../../features/UserSlice";
+import { useNavigate } from "react-router-dom";
 
 export const RegisterForm = () => {
   const dispatch = useAppDispatch();
-  const userState = useAppSelector(state => state.users.user); 
+  const userState = useAppSelector(state => state.users.user);
+  const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const username = event.target.username.value;
     const password = event.target.password.value;
 
-    dispatch(registerUser({ username, password }));
+    const resultAction = await dispatch(registerUser({ username, password }));
+
+    if (registerUser.fulfilled.match(resultAction)) {
+      navigate('/establishments');
+    }
   };
+
 
   return (
     <Grid container justifyContent="center">
