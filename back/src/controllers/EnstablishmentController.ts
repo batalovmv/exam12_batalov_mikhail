@@ -20,7 +20,9 @@ export class EstablishmentController {
   }
   @Get('/')
   async getAll() {
-    const establishments = await EstablishmentRepository.find();
+    const establishments = await EstablishmentRepository.find({
+      relations: ['user', 'reviews', 'images']
+    });
 
     return establishments;
   }
