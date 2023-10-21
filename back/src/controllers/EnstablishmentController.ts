@@ -18,7 +18,12 @@ export class EstablishmentController {
 
     return newEstablishment;
   }
+  @Get('/')
+  async getAll() {
+    const establishments = await EstablishmentRepository.find();
 
+    return establishments;
+  }
   @Get('/:id')
   async get(@Param('id') id: number) {
     const establishment = await EstablishmentRepository.findOne({ where: { id } });
