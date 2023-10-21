@@ -17,7 +17,7 @@ export class Review {
   @Column()
   environmentRating!: number;
 
-  @Column()
+  @Column('text')
   comment!: string;
 
   @ManyToOne(type => User, user => user.reviews)

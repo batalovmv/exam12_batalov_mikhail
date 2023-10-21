@@ -19,9 +19,6 @@ export default class UserSeeder implements Seeder {
     await repository.insert([
       {
         username: 'admin',
-        displayName: 'Admin Name',
-        email: 'admin@example.com',
-        avatar: 'default_avatar.png',
         password: adminHashedPassword,
         role: UserRole.Admin,
         token: nanoid()
@@ -29,9 +26,6 @@ export default class UserSeeder implements Seeder {
       // Добавляем пользователя
       {
         username: 'user',
-        displayName: 'User Name',
-        email: 'user@example.com',
-        avatar: 'default_avatar.png',
         password: userHashedPassword,
         role: UserRole.User,
         token: nanoid()

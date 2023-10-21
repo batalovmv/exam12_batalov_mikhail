@@ -9,6 +9,8 @@ import { EstablishmentFactory } from './database/factories/enstablishment.factor
 import { ImageFactory } from './database/factories/image.factory';
 import { UserFactory } from './database/factories/user.factory';
 import { SeederOptions } from 'typeorm-extension';
+import { Image } from './entities/image.entity';
+import { ReviewFactory } from './database/factories/review.factory';
 const options: DataSourceOptions & SeederOptions = {
   type: 'mysql',
   host: 'localhost',
@@ -18,7 +20,7 @@ const options: DataSourceOptions & SeederOptions = {
   database: 'test',
   entities: [Establishment, Image,Review,User],
   seeds: [UserSeeder,MainSeeder],
-  factories: [EstablishmentFactory,ImageFactory,UserFactory],
+  factories: [EstablishmentFactory,ImageFactory,UserFactory,ReviewFactory],
   synchronize: true,
 };
 export const AppDataSource = new DataSource(options);

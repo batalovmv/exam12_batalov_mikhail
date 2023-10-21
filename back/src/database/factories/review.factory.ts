@@ -8,6 +8,6 @@ export const ReviewFactory = setSeederFactory(Review, (faker: Faker) => {
   review.qualityRating = faker.number.int({ min: 1, max: 5 });
   review.serviceRating = faker.number.int({ min: 1, max: 5 });
   review.environmentRating = faker.number.int({ min: 1, max: 5 });
-
+  review.comment = faker.lorem.sentences();
   return review;
 });

@@ -6,10 +6,11 @@ import cors from 'cors';
 import path from 'path';
 import { authorizationChecker } from './auth/authChecker';
 import { currentUserChecker } from './auth/currentUserChecker';
-import { CocktailController } from './controllers/СocktailController';
-import { IngredientController } from './controllers/IngredientController';
-import { RatingController } from './controllers/RatingController';
+
 import { runSeeders } from 'typeorm-extension';
+import { EstablishmentController } from './controllers/EnstablishmentController';
+import { ImageController } from './controllers/ImageController';
+import { ReviewController } from './controllers/ReviewController';
 
 const app = express();
 app.use(cors())
@@ -29,7 +30,7 @@ AppDataSource.initialize().then(async () => {
   useExpressServer(app, {
     classTransformer: true,
     validation: true,
-    controllers: [CocktailController, IngredientController,RatingController, UserController],
+    controllers: [EstablishmentController, ImageController,ReviewController, UserController],
     authorizationChecker: authorizationChecker,
     currentUserChecker: currentUserChecker,
   });
