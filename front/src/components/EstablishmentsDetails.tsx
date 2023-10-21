@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { useEffect, useState } from "react";
 import { Box, Button, Grid, Paper, TextField, TextareaAutosize, Typography } from "@mui/material";
@@ -12,7 +12,7 @@ export const EstablishmentDetails = () => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.users.user); 
   const establishment = useAppSelector((state) => state.establishments.establishments).find(est => est.id === +id);
-
+  const navigate = useNavigate();
   const [reviewText, setReviewText] = useState('');
   const [qualityRating, setQualityRating] = useState<number | null>(null);
   const [serviceRating, setServiceRating] = useState<number | null>(null);
@@ -50,6 +50,7 @@ export const EstablishmentDetails = () => {
       setQualityRating(null);
       setServiceRating(null);
       setEnvironmentRating(null);
+      navigate('/establishments');
     }
   };
   const handleDeleteReview = (reviewId: number) => {
@@ -91,27 +92,57 @@ export const EstablishmentDetails = () => {
               value={reviewText}
               onChange={(e) => setReviewText(e.target.value)}
             />
-            <TextField
-              type="number"
-              value={qualityRating || ''}
-              onChange={(e) => setQualityRating(Number(e.target.value))}
-              label="Quality Rating"
-              inputProps={{ min: 1, max: 5 }}
-            />
-            <TextField
-              type="number"
-              value={serviceRating || ''}
-              onChange={(e) => setServiceRating(Number(e.target.value))}
-              label="Service Rating"
-              inputProps={{ min: 1, max: 5 }}
-            />
-            <TextField
-              type="number"
-              value={environmentRating || ''}
-              onChange={(e) => setEnvironmentRating(Number(e.target.value))}
-              label="Environment Rating"
-              inputProps={{ min: 1, max: 5 }}
-            />
+            <Box mt={1}>
+              <TextField
+                fullWidth
+                type="number"
+                value={qualityRating || ''}
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  if (val >= 1 && val <= 5) {
+                    setQualityRating(val);
+                  } else {
+                    alert("Please enter a Quality Rating value between 1 and 5");
+                  }
+                }}
+                label="Quality Rating"
+                inputProps={{ min: 1, max: 5 }}
+              />
+            </Box>
+            <Box mt={1}>
+              <TextField
+                fullWidth
+                type="number"
+                value={serviceRating || ''}
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  if (val >= 1 && val <= 5) {
+                    setServiceRating(val);
+                  } else {
+                    alert("Please enter a Service Rating value between 1 and 5");
+                  }
+                }}
+                label="Service Rating"
+                inputProps={{ min: 1, max: 5 }}
+              />
+            </Box>
+            <Box mt={1}>
+              <TextField
+                fullWidth
+                type="number"
+                value={environmentRating || ''}
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  if (val >= 1 && val <= 5) {
+                    setEnvironmentRating(val);
+                  } else {
+                    alert("Please enter an Environment Rating value between 1 and 5");
+                  }
+                }}
+                label="Environment Rating"
+                inputProps={{ min: 1, max: 5 }}
+              />
+            </Box>
             <Button onClick={handleAddReview}>Submit Review</Button>
           </Paper>
         </Grid>
